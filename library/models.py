@@ -34,6 +34,11 @@ class Author(db.Model):
     def __unicode__(self):
         return self.name
 
+def replace_authors(book, author_ids):
+    authors = Author.query.filter(Author.id.in_(author_ids)).all()
+    book.authors = authors
+    return book
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
