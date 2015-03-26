@@ -3,6 +3,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 
+def get_or_build(model, **fields):
+    instance = model.query.filter_by(**fields).first()
+    if not instance:
+        instance = model(**fields)
+    return instance
 
 book_author = db.Table('book_author',
     db.Column('book_id', db.Integer, db.ForeignKey('book.id')),
@@ -15,7 +20,8 @@ class Book(db.Model):
     title = db.Column(db.String)
 
     authors = db.relationship('Author', secondary='book_author',
-                              backref=db.backref('books', lazy='dynamic'))
+                              backref=db.backref('books', lazy='dynamic'),
+                              lazy='dynamic')
 
     def __unicode__(self):
         return self.title

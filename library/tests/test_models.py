@@ -1,21 +1,7 @@
-import unittest
-from app import app, db
+from app import db
 
-from ..models import Book, User
-
-class TestCase(unittest.TestCase):
-    # Testing DB is recreated for every test
-    # Better to create the DB once and wrap every test in transaction
-    # But for now, let it be
-    def setUp(self):
-        app.config.from_object('config.TestConfig')
-        self.app = app.test_client()
-        db.create_all()
-
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-
+from . import TestCase
+from ..models import Author, Book, User, get_or_build
 
 class BookTest(TestCase):
     def test_unicode(self):
@@ -27,3 +13,14 @@ class UserTest(TestCase):
         u = User('email@mail.com', 'pwd')
         self.assertTrue(u.check_password('pwd'))
         self.assertFalse(u.check_password('ppwwdd'))
+
+
+class AuthorTest(TestCase):
+    def test_get_or_build(self):
+        a = Author(name='Author')
+        db.session.add(a)
+        db.session.commit()
+        a2 = get_or_build(Author, name='Author')
+        self.assertEqual(a.id, a2.id)
+        a3 = get_or_build(Author, name='Author3')
+        self.assertIsNone(a3.id)

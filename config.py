@@ -5,6 +5,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 class BaseConfig(object):
     DEBUG = False
+    SECRET_KEY = 'should-be-secret'
 
 class DevelConfig(BaseConfig):
     DEBUG = True
@@ -12,4 +13,5 @@ class DevelConfig(BaseConfig):
 
 class TestConfig(BaseConfig):
     TESTING = True
+    WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
