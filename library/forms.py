@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, IntegerField, FieldList, PasswordField, ValidationError
+from wtforms import StringField, IntegerField, FieldList, PasswordField, ValidationError, BooleanField
 from wtforms.widgets import HiddenInput
 from wtforms.validators import DataRequired, Email
 
@@ -19,6 +19,7 @@ class BookForm(Form):
 class LoginForm(Form):
     email = StringField('Email address', validators=[Email(), DataRequired()])
     password = PasswordField('Password')
+    remember = BooleanField('Remember', default=False)
 
     def validate_password(self, field):
         user = User.query.filter_by(
