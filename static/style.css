@@ -43,3 +43,15 @@ body {
 .bg-danger {
     padding: 10px;
 }
+.narrow-form {
+    max-width: 540px;
+    margin: auto;
+}
+.author-remove {
+    cursor: pointer;
+    margin-left: 10px;
+    vertical-align: text-top;
+}
+.authors li {
+    padding: 7px;
+}

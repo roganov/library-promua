@@ -1,10 +1,12 @@
-from flask import render_template, url_for, redirect, request
+import json
+
+from flask import render_template, url_for, redirect, request, jsonify
 from flask.ext.login import login_user, logout_user, login_required
 
-from app import app, login_manager
+from app import app, db
 
-from .forms import LoginForm
-from .models import find_books
+from .forms import LoginForm, BookForm, AuthorForm
+from .models import find_books, add_book, Author
 
 
 @app.route('/')
@@ -32,3 +34,46 @@ def books_view():
     author_name = request.args.get('author', '').strip()
     books = find_books(title, author_name)
     return render_template('books.html', books=books)
+
+@app.route("/books/add", methods=['GET', 'POST'])
+@login_required
+def add_book_view():
+    form = BookForm()
+    if form.validate_on_submit():
+        title = form.title.data
+        ids = form.author_ids.data
+        add_book(title, ids)
+        db.session.commit()
+        return redirect(url_for('books_view'))
+    else:
+        return render_template('add-book.html', form=form)
+
+@app.route("/authors/add", methods=['POST'])
+def add_author_view():
+    form = AuthorForm()
+    if form.validate_on_submit():
+        a = Author()
+        form.populate_obj(a)
+        db.session.add(a)
+        db.session.commit()
+        return jsonify(id=a.id, name=a.name)
+
+@app.route("/authors")
+@login_required
+def authors_api():
+    prefix = request.args.get('prefix')
+    name = request.args.get('name')
+    with_books = request.args.get('with_books') == '1'
+    authors = Author.query
+    if name:
+        authors = authors.filter(Author.name == name)
+    elif prefix:
+        authors = authors.filter(Author.name.startswith(prefix))
+    if with_books:
+        authors = authors.options(db.joinedload(Author.books))
+        data = [{'id': a.id, 'name': a.name,
+                 'books': [b.title for b in a.books]}
+                for a in authors]
+    else:
+        data = [{'id': a.id, 'name': a.title} for a in authors]
+    return jsonify(result=data)
