@@ -4,6 +4,7 @@ from flask.ext.login import login_user, logout_user, login_required
 from app import app, login_manager
 
 from .forms import LoginForm
+from .models import find_books
 
 
 @app.route('/')
@@ -23,3 +24,11 @@ def login():
 def logout():
     logout_user()
     return redirect(request.args.get('next') or url_for('index'))
+
+@app.route("/books")
+@login_required
+def books_view():
+    title = request.args.get('title', '').strip()
+    author_name = request.args.get('author', '').strip()
+    books = find_books(title, author_name)
+    return render_template('books.html', books=books)

@@ -21,8 +21,8 @@ class Book(db.Model):
     title = db.Column(db.String)
 
     authors = db.relationship('Author', secondary='book_author',
-                              backref=db.backref('books', lazy='dynamic'),
-                              lazy='dynamic')
+                              backref=db.backref('books', lazy='dynamic')
+                              )
 
     def __unicode__(self):
         return self.title
@@ -40,6 +40,13 @@ def replace_authors(book, author_ids):
     book.authors = authors
     return book
 
+def find_books(title, author_name):
+    res = Book.query.order_by('id')
+    if title:
+        res = res.filter(Book.title == title)
+    if author_name:
+        res = res.filter(Book.authors.any(Author.name == author_name))
+    return res.options(db.joinedload(Book.authors))
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
