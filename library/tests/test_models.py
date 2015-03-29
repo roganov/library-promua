@@ -12,15 +12,15 @@ class BookTest(TestCase):
         b = Book(title='Test')
         b.authors.append(Author(name='1'))
         db.session.add(b)
-        self.assertEqual(b.authors.count(), 1)
+        self.assertEqual(b.authors_query.count(), 1)
 
         a2, a3 = Author(name='2'), Author(name='3')
         db.session.add(a2)
         db.session.add(a3)
         db.session.flush()
-        replace_authors(b, [a2.id, a3.id])
+        replace_authors(b, [a2, a3])
         # assert that
-        self.assertEqual(b.authors.order_by('id').all(), [a2, a3])
+        self.assertEqual(b.authors_query.order_by('id').all(), [a2, a3])
         # assert that first author is still in the DB
         self.assertTrue(Author.query.filter_by(id=1).first())
 

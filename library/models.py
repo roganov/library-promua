@@ -22,6 +22,9 @@ class Book(db.Model):
 
     authors = db.relationship('Author', secondary='book_author',
                               backref=db.backref('books'))
+    authors_query = db.relationship('Author', secondary='book_author',
+                                    backref=db.backref('books_query', lazy='dynamic'),
+                                    lazy='dynamic')
 
     def __unicode__(self):
         return self.title
@@ -34,14 +37,13 @@ class Author(db.Model):
     def __unicode__(self):
         return self.name
 
-def replace_authors(book, author_ids):
-    authors = Author.query.filter(Author.id.in_(author_ids)).all()
+def replace_authors(book, authors):
     book.authors = authors
     return book
 
-def add_book(title, author_ids):
+def add_book(title, authors):
     book = Book(title=title)
-    replace_authors(book, author_ids)
+    replace_authors(book, authors)
     db.session.add(book)
     return book
 
