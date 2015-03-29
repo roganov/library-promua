@@ -1,6 +1,6 @@
 import json
 
-from flask import render_template, url_for, redirect, request, jsonify
+from flask import render_template, url_for, redirect, request, jsonify, flash
 from flask.ext.login import login_user, logout_user, login_required
 
 from app import app, db
@@ -18,6 +18,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         login_user(form.user, remember=form.remember.data)
+        flash("Successfully logged in!", "success")
         return redirect(request.args.get('next') or url_for('index'))
     return render_template('login.html', form=form)
 

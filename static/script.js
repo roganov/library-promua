@@ -7,6 +7,10 @@ function initAuthorsModal() {
     var authors = $('.js-authors'),
         modal = $('#modal'),
         modalAuthors = modal.find('.authors');
+    if (authors.length === 0) {
+        // checking that invoked on the right page
+        return;
+    }
     authors.on('click', '.author-remove', function () {
         var node = $(this).parent().parent();
         node.hide('slow', function () {
