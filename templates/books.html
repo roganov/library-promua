@@ -6,11 +6,13 @@
     <form class="form-inline">
       <div class="form-group">
         <label class="sr-only" for="title">Book title</label>
-        <input type="text" class="form-control" name="title" id="title" placeholder="Book title" value="{{ request.args.get('title', '') }}">
+        <input type="text" class="form-control" name="title" id="title" placeholder="Book title"
+               value="{{ request.args.get('title', '') }}">
       </div>
       <div class="form-group">
         <label class="sr-only" for="name">Author name</label>
-        <input type="text" class="form-control" id="name" name="author" placeholder="Author name" value="{{ request.args.get('author', '') }}">
+        <input type="text" class="form-control" id="name" name="author" placeholder="Author name"
+               value="{{ request.args.get('author', '') }}">
       </div>
       <button type="submit" class="btn btn-default">Search</button>
     </form>
@@ -29,23 +31,31 @@
     </tr>
     </thead>
     {% for book in books %}
-    <tr>
-      <td scope="row">
-        {{ loop.index }}
-      </td>
-      <td>
-        {{ book.title }}
-      </td>
-      <td>
-        <ul class="list-unstyled">
-          {% for author in book.authors %}
-          <li>
-            {{ author.name }}
-          </li>
-          {% endfor %}
-        </ul>
-      </td>
-    </tr>
+      <tr>
+        <td scope="row">
+          {{ loop.index }}
+        </td>
+        <td>
+          {% if current_user.can_edit %}
+            <a href="{{ url_for('edit_book_view', book_id=book.id) }}">{{ book.title }}</a>
+          {% else %}
+            {{ book.title }}
+          {% endif %}
+        </td>
+        <td>
+          <ul class="list-unstyled">
+            {% for author in book.authors %}
+              <li>
+                {% if current_user.can_edit %}
+                  <a href="{{ url_for('edit_book_view', book_id=book.id) }}">{{ author.name }}</a>
+                {% else %}
+                  {{ author.name }}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
     {% endfor %}
   </table>
 {% endblock %}

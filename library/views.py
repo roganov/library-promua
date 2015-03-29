@@ -52,6 +52,22 @@ def add_book_view():
     else:
         return render_template('add-book.html', form=form)
 
+@app.route("/books/<int:book_id>", methods=['GET', 'POST'])
+@can_edit_required
+def edit_book_view(book_id):
+    obj = Book.query.options(db.joinedload(Book.authors)).get(book_id)
+    if obj is None:
+        abort(404)
+    form = BookForm(obj=obj)
+    if form.validate_on_submit():
+        obj.title = form.title.data
+        authors = form.authors.authors
+        replace_authors(obj, authors)
+        db.session.commit()
+        return redirect(url_for('books_view'))
+    else:
+        return render_template('add-book.html', form=form, obj=obj)
+
 @app.route("/authors/add", methods=['POST'])
 @can_edit_required
 def add_author_view():
