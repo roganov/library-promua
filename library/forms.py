@@ -3,7 +3,7 @@ from wtforms import StringField, IntegerField, FieldList, PasswordField, Validat
 from wtforms.widgets import HiddenInput
 from wtforms.validators import DataRequired, Email
 
-from .models import User
+from .models import User, Author
 
 
 class AuthorForm(Form):
@@ -13,8 +13,16 @@ class AuthorForm(Form):
 
 class BookForm(Form):
     title = StringField('Book title', validators=[DataRequired()])
-    author_ids = FieldList(IntegerField(validators=[DataRequired()]),
+    authors = FieldList(IntegerField(validators=[DataRequired()]),
                            min_entries=1)
+
+    def validate_authors(self, field):
+        ids = field.data
+        authors = Author.query.filter(Author.id.in_(ids)).all()
+        if not authors:
+            field.errors = []
+            raise ValidationError("At least one author is required")
+        field.authors = authors
 
 class LoginForm(Form):
     email = StringField('Email address', validators=[Email(), DataRequired()])

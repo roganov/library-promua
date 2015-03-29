@@ -3,7 +3,7 @@ from app import app, db
 
 from library.forms import BookForm, AuthorForm, LoginForm
 
-from ..models import User
+from ..models import User, Author
 
 from . import TestCase
 
@@ -12,11 +12,13 @@ class BookFormTest(TestCase):
         data = MultiDict({
             'title': 'Book title'
         })
+        a = Author(name='Nabokov')
+        db.session.add(a)
         with app.app_context():
             f = BookForm(formdata=data)
             self.assertFalse(f.validate())
 
-            data['author_ids-0'] = 1
+            data['authors-0'] = a.id
             f = BookForm(formdata=data)
             self.assertTrue(f.validate())
 

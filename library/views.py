@@ -42,8 +42,8 @@ def add_book_view():
     form = BookForm()
     if form.validate_on_submit():
         title = form.title.data
-        ids = form.author_ids.data
-        add_book(title, ids)
+        authors = form.authors.authors
+        add_book(title, authors)
         db.session.commit()
         return redirect(url_for('books_view'))
     else:

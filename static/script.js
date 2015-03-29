@@ -93,7 +93,7 @@ function createInsertAuthor(authors, name) {
 function authorTempl(i, id, name) {
     'use strict';
     return "<li>" +
-        "<input type='hidden' name='author_ids-" + i + "' value='" + id + "'>" +
+        "<input type='hidden' name='authors-" + i + "' value='" + id + "'>" +
         escape(name) +
         "<a><span class='author-remove text-muted glyphicon glyphicon-remove-sign'></span></a>" +
         "</li>";

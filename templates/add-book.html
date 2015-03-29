@@ -2,6 +2,14 @@
 {% block content %}
   <form method="post" class="narrow-form" action="">
     <h2 class="form-signin-heading">Creating a new book</h2>
+    <ul class="text-danger">
+      {% for f, errors in form.errors.iteritems() %}
+        {% for e in errors %}
+          <li>{{ e }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+
     {#    {% if form.errors %}#}
     {#      <p class="bg-danger">{{ form.title.errors[0] }}</p>#}
     {#    {% endif %}#}
@@ -41,7 +49,9 @@
           <h4 class="modal-title" id="myModalLabel">Selecting author</h4>
         </div>
         <div class="modal-body">
-          <p class="text-info">Author(s) with same name already exist. Select if it is the same person, otherwise create a new one.</p>
+          <p class="text-info">Author(s) with same name already exist. Select if it is the same person, otherwise create
+            a new one.</p>
+
           <div class="authors"></div>
         </div>
         <div class="modal-footer">
