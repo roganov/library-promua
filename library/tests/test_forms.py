@@ -28,15 +28,13 @@ class LoginFormTest(TestCase):
         u = User(email='email@mail.com', password='password')
         db.session.add(u)
         db.session.commit()
-        with app.app_context():
-            f = LoginForm(data={
-                'email': u.email,
-                'password': 'password'
-            })
+        f = LoginForm(data={
+            'email': u.email,
+            'password': 'password'
+        })
         self.assertTrue(f.validate())
-        with app.app_context():
-            f = LoginForm(data={
-                'email': u.email,
-                'password': 'pwd'
-            })
+        f = LoginForm(data={
+            'email': u.email,
+            'password': 'pwd'
+        })
         self.assertFalse(f.validate())
