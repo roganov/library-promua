@@ -2,11 +2,14 @@ import json
 
 from flask import render_template, url_for, redirect, request, jsonify, flash
 from flask.ext.login import login_user, logout_user, login_required
+from werkzeug.exceptions import abort
 
 from app import app, db
 
 from .forms import LoginForm, BookForm, AuthorForm
-from .models import find_books, add_book, Author
+from library.models import replace_authors
+from .models import find_books, add_book, Author, Book
+from .utils import can_edit_required
 
 
 @app.route('/')
@@ -37,7 +40,7 @@ def books_view():
     return render_template('books.html', books=books)
 
 @app.route("/books/add", methods=['GET', 'POST'])
-@login_required
+@can_edit_required
 def add_book_view():
     form = BookForm()
     if form.validate_on_submit():
@@ -50,6 +53,7 @@ def add_book_view():
         return render_template('add-book.html', form=form)
 
 @app.route("/authors/add", methods=['POST'])
+@can_edit_required
 def add_author_view():
     form = AuthorForm()
     if form.validate_on_submit():

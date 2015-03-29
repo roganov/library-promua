@@ -30,8 +30,7 @@ class LoginForm(Form):
     remember = BooleanField('Remember', default=False)
 
     def validate_password(self, field):
-        user = User.query.filter_by(
-            email=self.email.data).first()
+        user = User.query.filter_by(email=self.email.data).first()
         if user is None or not user.check_password(field.data):
             raise ValidationError('Invalid email or password')
         self.user = user

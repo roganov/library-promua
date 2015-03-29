@@ -45,9 +45,11 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if current_user.is_authenticated() %}
+            {% if current_user.can_edit %}
             <li>
               <p class="navbar-btn"><a href="{{ url_for('add_book_view') }}" class="btn btn-info">Add a book</a></p>
             </li>
+            {% endif %}
             <li class="navbar-text"><b>{{ current_user.email }}</b></li>
             <li {% if request.url_rule.endpoint == 'logout' %}class="active" {% endif %}><a
                 href="{{ url_for('logout') }}">Sign out</a></li>

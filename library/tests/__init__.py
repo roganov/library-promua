@@ -22,12 +22,10 @@ class TestCase(unittest.TestCase):
         db.drop_all()
 
     def login(self, email, password):
-        with app.app_context():
-            self.app.post(url_for('login'), {
-                'email': email,
-                'password': password
-            })
+        return self.app.post(url_for('login'), data={
+            'email': email,
+            'password': password
+        })
 
     def logout(self):
-        with app.app_context():
-            self.app.get(url_for('logout'))
+        self.app.get(url_for('logout'))

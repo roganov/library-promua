@@ -39,6 +39,7 @@ class Author(db.Model):
 
 def replace_authors(book, authors):
     book.authors = authors
+    db.session.add(book)
     return book
 
 def add_book(title, authors):
@@ -59,10 +60,12 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
+    can_edit = db.Column(db.Boolean, default=False)
 
-    def __init__(self, email, password):
+    def __init__(self, email, password, can_edit=False):
         self.email = email
         self.set_password(password)
+        self.can_edit = can_edit
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -72,4 +75,4 @@ class User(UserMixin, db.Model):
 
 @login_manager.user_loader
 def load_user(uid):
-    return User.query.get(uid)
+    return User.query.get(int(uid))
