@@ -37,10 +37,12 @@ class Author(db.Model):
     def __unicode__(self):
         return self.name
 
+
 def replace_authors(book, authors):
     book.authors = authors
     db.session.add(book)
     return book
+
 
 def add_book(title, authors):
     book = Book(title=title)
@@ -48,10 +50,12 @@ def add_book(title, authors):
     db.session.add(book)
     return book
 
+
 def delete_book(book_id):
     del_stm = book_author.delete().where(book_author.c.book_id == book_id)
     db.session.execute(del_stm)
     Book.query.filter_by(id=book_id).delete()
+
 
 def find_books(title, author_name):
     res = Book.query.order_by(Book.title)
@@ -60,6 +64,16 @@ def find_books(title, author_name):
     if author_name:
         res = res.filter(Book.authors.any(Author.name == author_name))
     return res.options(db.joinedload(Book.authors))
+
+
+def find_authors(author_name, title):
+    res = Author.query.order_by(Author.name)
+    if author_name:
+        res = res.filter(Author.name == author_name)
+    if title:
+        res = res.filter(Author.books.any(Book.title == title))
+    return res.options(db.joinedload(Author.books))
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)

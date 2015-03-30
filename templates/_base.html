@@ -38,9 +38,10 @@
         <ul class="nav navbar-nav">
           <li {% if request.url_rule.endpoint == 'index' %}class="active" {% endif %}><a href="{{ url_for('index') }}">Home</a>
           </li>
-          <li {% if request.url_rule.endpoint == 'books_view' %}class="active" {% endif %}><a
-              href="{{ url_for('books_view') }}">Books</a></li>
-          <li {% if request.url_rule.endpoint == 'authors_view' %}class="active" {% endif %}><a href="#">Authors</a>
+          <li {% if request.url_rule.endpoint == 'books_view' %}class="active" {% endif %}>
+            <a href="{{ url_for('books_view') }}">Books</a></li>
+          <li {% if request.url_rule.endpoint == 'authors_view' %}class="active" {% endif %}>
+            <a href="{{ url_for('authors_view') }}">Authors</a>
           </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">

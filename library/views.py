@@ -8,7 +8,7 @@ from app import app, db
 
 from .forms import LoginForm, BookForm, AuthorForm
 from library.models import replace_authors, delete_book
-from .models import find_books, add_book, Author, Book
+from .models import find_books, find_authors, add_book, Author, Book
 from .utils import can_edit_required
 
 
@@ -77,7 +77,7 @@ def edit_book_view(book_id):
     return render_template('add-book.html', form=form, obj=obj)
 
 
-@app.route("/authors/add", methods=['POST'])
+@app.route("/api/authors/add", methods=['POST'])
 @can_edit_required
 def add_author_view():
     form = AuthorForm()
@@ -88,7 +88,7 @@ def add_author_view():
         db.session.commit()
         return jsonify(id=a.id, name=a.name)
 
-@app.route("/authors")
+@app.route("/api/authors")
 @login_required
 def authors_api():
     prefix = request.args.get('prefix')
@@ -107,3 +107,11 @@ def authors_api():
     else:
         data = [{'id': a.id, 'name': a.title} for a in authors]
     return jsonify(result=data)
+
+@app.route("/authors")
+@login_required
+def authors_view():
+    title = request.args.get('title', '').strip()
+    author_name = request.args.get('author', '').strip()
+    authors = find_authors(author_name, title).all()
+    return render_template('authors.html', authors=authors)

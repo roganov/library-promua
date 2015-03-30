@@ -18,41 +18,42 @@
     </form>
   </div>
   <table class="table">
-    {% if not books %}
+    {% if not authors %}
       <caption><h3>Nothing found. Please try a different search query.</h3></caption>
     {% else %}
-      <caption><h3>List of found books</h3></caption>
+      <caption><h3>List of found authors</h3></caption>
       <thead>
       <tr>
         <th>#</th>
         <th>
-          Title
+          Author
         </th>
         <th>
-          Authors
+          Books
         </th>
       </tr>
       </thead>
-      {% for book in books %}
+      {% for author in authors %}
         <tr>
           <td scope="row">
             {{ loop.index }}
           </td>
           <td>
             {% if current_user.can_edit %}
-              <a href="{{ url_for('edit_book_view', book_id=book.id) }}">{{ book.title }}</a>
+{#              <a href="{{ url_for('edit_book_view', book_id=book.id) }}">{{ book.title }}</a>#}
+              {{ author.name }}
             {% else %}
-              {{ book.title }}
+              {{ author.name }}
             {% endif %}
           </td>
           <td>
             <ul class="list-unstyled">
-              {% for author in book.authors %}
+              {% for book in author.books %}
                 <li>
                   {% if current_user.can_edit %}
-                    <a href="{{ url_for('edit_book_view', book_id=book.id) }}">{{ author.name }}</a>
+                    <a href="{{ url_for('edit_book_view', book_id=book.id) }}">{{ book.title }}</a>
                   {% else %}
-                    {{ author.name }}
+                    {{ book.title }}
                   {% endif %}
                 </li>
               {% endfor %}

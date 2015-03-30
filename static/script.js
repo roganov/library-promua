@@ -21,7 +21,7 @@ function initAuthorsModal() {
             return;
         }
         modal.data('name', name);
-        $.ajax('/authors', {
+        $.ajax('/api/authors', {
             method: 'GET',
             data: {
                 'with_books': 1,
@@ -86,7 +86,7 @@ function insertAuthor(authors, authorId, name) {
 }
 function createInsertAuthor(authors, name) {
     'use strict';
-    $.ajax('/authors/add', {
+    $.ajax('/api/authors/add', {
         method: 'POST',
         data: {
             name: name,
