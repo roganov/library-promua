@@ -10,7 +10,7 @@ class AuthorizedEditTest(TestCase):
         self.login(u.email, 'password')
         r = self.app.get(url_for('add_book_view'))
         self.assertEqual(r.status_code, 404)
-        b = self.make_book()
+        b = make_book()
         r = self.app.get(url_for('edit_book_view', book_id=b.id))
         self.assertEqual(r.status_code, 404)
 
