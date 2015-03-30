@@ -6,11 +6,44 @@ function initAuthorsModal() {
     'use strict';
     var authors = $('.js-authors'),
         modal = $('#modal'),
+        authorInput = $('input[name="author"]'),
         modalAuthors = modal.find('.authors');
     if (authors.length === 0) {
         // checking that invoked on the right page
         return;
     }
+
+    var addAuthor = function () {
+        var  name = authorInput.val();
+        authorInput.val('');
+        if (name === '') {
+            authorInput.focus();
+            return;
+        }
+        modal.data('name', name);
+        $.ajax('/authors', {
+            method: 'GET',
+            data: {
+                'with_books': 1,
+                name: name
+            },
+            success: function (data) {
+                var result = data.result,
+                    len = result.length;
+                if (len) {
+                    modalAuthors.empty();
+                    for (var i = 0; i < len; i++) {
+                        var node = $(modalRadioTempl(result[i]));
+                        modalAuthors.append(node);
+                    }
+                    modal.modal();
+                } else {
+                    createInsertAuthor(authors, name);
+                }
+            }
+        });
+    };
+
     authors.on('click', '.author-remove', function () {
         var node = $(this).parent().parent();
         node.hide('slow', function () {
@@ -29,38 +62,12 @@ function initAuthorsModal() {
         createInsertAuthor(authors, modal.data('name'));
         modal.modal('hide');
     });
-    $('.js-add-author').click(function () {
-        var input = $(this).parent().parent().find('input'),
-            name = input.val();
-        input.val('');
-        if (name === '') {
-            input.focus();
-            return;
+    $('.js-add-author').click(addAuthor);
+    authorInput.keydown(function (e) {
+        if (e.keyCode === 13) { // return key
+            e.preventDefault();
+            addAuthor();
         }
-        modal.data('name', name);
-        $.ajax('/authors',
-            {
-                method: 'GET',
-                data: {
-                    'with_books': 1,
-                    name: name
-                },
-                success: function (data) {
-                    var result = data.result,
-                        len = result.length;
-                    if (len) {
-                        modalAuthors.empty();
-                        for (var i = 0; i < len; i++) {
-                            var node = $(modalRadioTempl(result[i]));
-                            modalAuthors.append(node);
-                        }
-                        modal.modal();
-                    } else {
-                        createInsertAuthor(authors, name);
-                    }
-                }
-            }
-        );
     });
 }
 function insertAuthor(authors, authorId, name) {
@@ -99,6 +106,7 @@ function authorTempl(i, id, name) {
         "</li>";
 }
 function modalRadioTempl(author) {
+    'use strict';
     return '<div class="radio">' +
         '<label>' +
         '<input type="radio" name="author_id" value="' + author.id + '" checked>' +
@@ -107,6 +115,7 @@ function modalRadioTempl(author) {
         '</div>';
 }
 function escape(html) {
+    'use strict';
     // hacky way to escape html
     return $('<div/>').text(html).html();
 }
