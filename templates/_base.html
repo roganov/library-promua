@@ -56,8 +56,10 @@
                 href="{{ url_for('logout') }}">Sign out</a></li>
           {% else %}
             <li {% if request.url_rule.endpoint == 'login' %}class="active" {% endif %}><a
-                href="{{ url_for('login') }}">Sign in</a></li>
-            <li {% if request.url_rule.endpoint == 'register' %}class="active" {% endif %}><a href="#">Sign up</a></li>
+                href="{{ url_for('login') }}">Sign In</a></li>
+            <li {% if request.url_rule.endpoint == 'signup' %}class="active" {% endif %}>
+              <a href="{{ url_for('signup') }}">Sign Up</a>
+            </li>
           {% endif %}
         </ul>
       </div>

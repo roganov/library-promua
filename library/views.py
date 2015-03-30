@@ -6,9 +6,9 @@ from werkzeug.exceptions import abort
 
 from app import app, db
 
-from .forms import LoginForm, BookForm, AuthorForm
-from library.models import replace_authors, delete_book
-from .models import find_books, find_authors, add_book, Author, Book
+from .forms import LoginForm, BookForm, AuthorForm, RegisterForm
+from .models import find_books, find_authors, add_book, delete_book,\
+    replace_authors, Author, Book, User
 from .utils import can_edit_required
 
 
@@ -16,7 +16,7 @@ from .utils import can_edit_required
 def index():
     return render_template('index.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/signin', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -30,6 +30,19 @@ def login():
 def logout():
     logout_user()
     return redirect(request.args.get('next') or url_for('index'))
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        u = User(form.email.data, form.password1.data)
+        db.session.add(u)
+        db.session.commit()
+        login_user(u)
+        flash("Successfully signed up!", "success")
+        return redirect(request.args.get('next') or url_for('index'))
+    return render_template('signup.html', form=form)
 
 @app.route("/books")
 @login_required

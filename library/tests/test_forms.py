@@ -1,7 +1,7 @@
 from werkzeug.datastructures import MultiDict
 from app import app, db
 
-from library.forms import BookForm, AuthorForm, LoginForm
+from library.forms import BookForm, AuthorForm, LoginForm, RegisterForm
 
 from ..models import User, Author
 
@@ -36,5 +36,40 @@ class LoginFormTest(TestCase):
         f = LoginForm(data={
             'email': u.email,
             'password': 'pwd'
+        })
+        self.assertFalse(f.validate())
+
+class RegisterFormTest(TestCase):
+    def test_ok(self):
+        f = RegisterForm(data={
+            'email': 'test@mail.com',
+            'password1': '111111',
+            'password2': '111111'
+        })
+        self.assertTrue(f.validate())
+
+    def test_used_email(self):
+        u = User(email='test@mail.com', password='password')
+        db.session.add(u)
+        f = RegisterForm(data={
+            'email': 'test@mail.com',
+            'password1': '111111',
+            'password2': '111111'
+        })
+        self.assertFalse(f.validate())
+
+    def test_pwd_mismatch(self):
+        f = RegisterForm(data={
+            'email': 'test@mail.com',
+            'password1': '111111',
+            'password2': '11111'
+        })
+        self.assertFalse(f.validate())
+
+    def test_short_pwd(self):
+        f = RegisterForm(data={
+            'email': 'test@mail.com',
+            'password1': '1111',
+            'password2': '1111'
         })
         self.assertFalse(f.validate())

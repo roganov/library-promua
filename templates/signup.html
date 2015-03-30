@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+{% block content %}
+  <form class="form-signin" method="post" action="">
+    <h2 class="form-signin-heading">Signing up</h2>
+    {% if form.errors %}
+      <ul class="text-danger">
+        {% for f, errors in form.errors.iteritems() %}
+          {% for e in errors %}
+            <li>{{ e }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {{ form.csrf_token }}
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" name="email" id="inputEmail" class="form-control" value="{{ form.email.data or '' }}" placeholder="Email address" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" name="password1" id="inputPassword" class="form-control" placeholder="Password" required>
+    <label for="inputPassword2" class="sr-only">Password</label>
+    <input type="password" name="password2" id="inputPassword2" class="form-control" placeholder="Repeat password" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+  </form>
+{% endblock %}

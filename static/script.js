@@ -3,14 +3,14 @@ $(function () {
     initAuthorsModal();
 
     // highlighting
-    var title = getParameterByName('title'),
-        author = getParameterByName('author');
+    var title = getParameterByName('title').trim(),
+        author = getParameterByName('author').trim();
     if (location.pathname.match(/^\/authors/)) {
-        $(".table td:nth-child(2)").find("a").addBack().highlight(author, 'highlight');
-        $(".table td:nth-child(3)").find("a").addBack().highlight(title, 'highlight');
-    } else if (location.pathname.match(/^\/books/)) {
-        $(".table td:nth-child(2)").find("a").addBack().highlight(title, 'highlight');
-        $(".table td:nth-child(3)").find("a").addBack().highlight(author, 'highlight');
+        $(".table td:nth-child(2)").find("a,li").addBack().highlight(author, 'highlight');
+        $(".table td:nth-child(3)").find("a,li").addBack().highlight(title, 'highlight');
+    } else if (location.pathname.match(/^\//)) {
+        $(".table td:nth-child(2)").find("a,li").addBack().highlight(title, 'highlight');
+        $(".table td:nth-child(3)").find("a,li").addBack().highlight(author, 'highlight');
     }
 });
 function initAuthorsModal() {
