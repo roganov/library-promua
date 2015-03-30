@@ -63,22 +63,24 @@ def delete_book(book_id):
     db.session.execute(del_stm)
     Book.query.filter_by(id=book_id).delete()
 
+def contains(term):
+    return '%{}%'.format(term)
 
 def find_books(title, author_name):
     res = Book.query.order_by(Book.title)
     if title:
-        res = res.filter(Book.title == title)
+        res = res.filter(Book.title.ilike(contains(title)))
     if author_name:
-        res = res.filter(Book.authors.any(Author.name == author_name))
+        res = res.filter(Book.authors.any(Author.name.ilike(contains(author_name))))
     return res.options(db.joinedload(Book.authors))
 
 
 def find_authors(author_name, title):
     res = Author.query.order_by(Author.name)
     if author_name:
-        res = res.filter(Author.name == author_name)
+        res = res.filter(Author.name.ilike(contains(author_name)))
     if title:
-        res = res.filter(Author.books.any(Book.title == title))
+        res = res.filter(Author.books.any(Book.title.ilike(contains(title))))
     return res.options(db.joinedload(Author.books))
 
 

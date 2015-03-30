@@ -1,6 +1,17 @@
 $(function () {
     'use strict';
     initAuthorsModal();
+
+    // highlighting
+    var title = getParameterByName('title'),
+        author = getParameterByName('author');
+    if (location.pathname.match(/^\/authors/)) {
+        $(".table td:nth-child(2)").find("a").addBack().highlight(author, 'highlight');
+        $(".table td:nth-child(3)").find("a").addBack().highlight(title, 'highlight');
+    } else if (location.pathname.match(/^\/books/)) {
+        $(".table td:nth-child(2)").find("a").addBack().highlight(title, 'highlight');
+        $(".table td:nth-child(3)").find("a").addBack().highlight(author, 'highlight');
+    }
 });
 function initAuthorsModal() {
     'use strict';
@@ -115,7 +126,27 @@ function modalRadioTempl(author) {
         '</div>';
 }
 function escape(html) {
-    'use strict';
     // hacky way to escape html
+    'use strict';
     return $('<div/>').text(html).html();
 }
+function getParameterByName(name) {
+    // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript/901144#901144
+    'use strict';
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+jQuery.fn.highlight = function (str, className) {
+    var regex = new RegExp(str, "gi");
+    return this.each(function () {
+        $(this).contents().filter(function() {
+            return this.nodeType === 3 && regex.test(this.nodeValue);
+        }).replaceWith(function() {
+            return (this.nodeValue || "").replace(regex, function(match) {
+                return "<span class=\"" + className + "\">" + match + "</span>";
+            });
+        });
+    });
+};
