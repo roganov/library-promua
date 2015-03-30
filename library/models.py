@@ -48,6 +48,11 @@ def add_book(title, authors):
     db.session.add(book)
     return book
 
+def delete_book(book_id):
+    del_stm = book_author.delete().where(book_author.c.book_id == book_id)
+    db.session.execute(del_stm)
+    Book.query.filter_by(id=book_id).delete()
+
 def find_books(title, author_name):
     res = Book.query.order_by('id')
     if title:

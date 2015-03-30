@@ -7,7 +7,7 @@ from werkzeug.exceptions import abort
 from app import app, db
 
 from .forms import LoginForm, BookForm, AuthorForm
-from library.models import replace_authors
+from library.models import replace_authors, delete_book
 from .models import find_books, add_book, Author, Book
 from .utils import can_edit_required
 
@@ -48,6 +48,7 @@ def add_book_view():
         authors = form.authors.authors
         add_book(title, authors)
         db.session.commit()
+        flash('The book was successfully added', 'success')
         return redirect(url_for('books_view'))
     else:
         return render_template('add-book.html', form=form)
@@ -59,14 +60,22 @@ def edit_book_view(book_id):
     if obj is None:
         abort(404)
     form = BookForm(obj=obj)
-    if form.validate_on_submit():
-        obj.title = form.title.data
-        authors = form.authors.authors
-        replace_authors(obj, authors)
-        db.session.commit()
-        return redirect(url_for('books_view'))
-    else:
-        return render_template('add-book.html', form=form, obj=obj)
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'save' and form.validate_on_submit():
+            obj.title = form.title.data
+            authors = form.authors.authors
+            replace_authors(obj, authors)
+            db.session.commit()
+            flash('The book was successfully edited', 'success')
+            return redirect(url_for('books_view'))
+        elif action == 'delete':
+            delete_book(book_id)
+            db.session.commit()
+            flash('The book was successfully deleted', 'success')
+            return redirect(url_for('books_view'))
+    return render_template('add-book.html', form=form, obj=obj)
+
 
 @app.route("/authors/add", methods=['POST'])
 @can_edit_required

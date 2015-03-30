@@ -1,7 +1,8 @@
 from app import db
 
 from . import TestCase
-from ..models import Author, Book, User, get_or_build, replace_authors
+from ..models import Author, Book, User, book_author,\
+     get_or_build, replace_authors, delete_book
 
 class BookTest(TestCase):
     def test_unicode(self):
@@ -23,6 +24,16 @@ class BookTest(TestCase):
         self.assertEqual(b.authors_query.order_by('id').all(), [a2, a3])
         # assert that first author is still in the DB
         self.assertTrue(Author.query.filter_by(id=1).first())
+
+    def test_delete_book(self):
+        b = Book(title='Test')
+        b.authors.append(Author(name='1'))
+        db.session.add(b)
+        self.assertIsNotNone(Book.query.get(1))
+        self.assertEqual(db.session.query(book_author).count(), 1)
+        delete_book(b.id)
+        self.assertEqual(db.session.query(book_author).count(), 0)
+        self.assertIsNone(Book.query.get(1))
 
 
 class UserTest(TestCase):

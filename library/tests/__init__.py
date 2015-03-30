@@ -3,6 +3,8 @@ from flask import url_for
 
 from app import app, db
 
+from ..models import User
+
 class TestCase(unittest.TestCase):
     # Testing DB is recreated for every test
     # Better to create the DB once and wrap every test in transaction
@@ -26,6 +28,12 @@ class TestCase(unittest.TestCase):
             'email': email,
             'password': password
         })
+
+    def login_as_super(self):
+        u = User(email='mail@mail.com', password='password', can_edit=True)
+        db.session.add(u)
+        self.login(u.email, 'password')
+        return u
 
     def logout(self):
         self.app.get(url_for('logout'))
