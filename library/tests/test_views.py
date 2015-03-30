@@ -37,3 +37,37 @@ class EditBookTest(TestCase):
             'action': 'delete'
         })
         self.assertIsNone(Book.query.get(bid))
+
+
+class AddAuthorTest(TestCase):
+    def test(self):
+        self.login_as_super()
+        r = self.app.post(url_for('add_author_view'), data={
+            'name': 'Jane Doe',
+        })
+        self.assertEqual(Author.query.count(), 1)
+
+
+
+class EditAuthorTest(TestCase):
+    def test_edit(self):
+        a = Author(name='John Doe')
+        db.session.add(a)
+        db.session.flush()
+        self.login_as_super()
+        self.app.post(url_for('edit_author_view', author_id=a.id), data={
+            'name': 'Jane Doe',
+            'action': 'save'
+        })
+        self.assertEqual(a.name, 'Jane Doe')
+
+    def test_delete(self):
+        a = Author(name='John Doe')
+        db.session.add(a)
+        db.session.flush()
+        self.assertEqual(Author.query.all(), [a])
+        self.login_as_super()
+        self.app.post(url_for('edit_author_view', author_id=a.id), data={
+            'action': 'delete'
+        })
+        self.assertEqual(Author.query.all(), [])

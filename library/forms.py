@@ -3,12 +3,26 @@ from wtforms import StringField, IntegerField, FieldList, PasswordField, Validat
 from wtforms.widgets import HiddenInput
 from wtforms.validators import DataRequired, Email
 
-from .models import User, Author
+from .models import User, Author, Book
 
 
 class AuthorForm(Form):
-    id = IntegerField(widget=HiddenInput())
     name = StringField('Author\'s name', validators=[DataRequired()])
+    action = StringField('Action')
+
+    def __init__(self, *args, **kwargs):
+        self.obj = kwargs.get('obj')
+        super(AuthorForm, self).__init__(*args, **kwargs)
+
+    def validate(self):
+        if self.action.data == 'delete':
+            if self.obj.books:
+                self.action.errors =\
+                    ["You cannot delete an author who has associated books"]
+                return False
+            return True
+
+        return super(AuthorForm, self).validate()
 
 
 class BookForm(Form):

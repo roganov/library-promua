@@ -49,7 +49,7 @@ function initAuthorsModal() {
         node.hide('slow', function () {
             node.remove();
             if (authors.children().length === 0) {
-                authors.prev().toggleClass('hide'); // show the 'no-authors' caption
+                authors.prev().removeClass('hide'); // show the 'no-authors' caption
             }
         });
     });
@@ -81,7 +81,7 @@ function insertAuthor(authors, authorId, name) {
     }
 
     var nodes = $(authorTempl(id, authorId, name));
-    authors.prev().toggleClass('hide');
+    authors.prev().addClass('hide');
     authors.append(nodes);
 }
 function createInsertAuthor(authors, name) {

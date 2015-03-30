@@ -1,3 +1,4 @@
+from flask import url_for
 from flask.ext.login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -26,6 +27,9 @@ class Book(db.Model):
                                     backref=db.backref('books_query', lazy='dynamic'),
                                     lazy='dynamic')
 
+    def get_url(self):
+        return url_for('edit_book_view', book_id=self.id)
+
     def __unicode__(self):
         return self.title
 
@@ -33,6 +37,9 @@ class Book(db.Model):
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+
+    def get_url(self):
+        return url_for('edit_author_view', author_id=self.id)
 
     def __unicode__(self):
         return self.name

@@ -1,0 +1,58 @@
+{% extends '_base.html' %}
+{% block content %}
+  <form method="post" class="narrow-form" action="">
+    <h2 class="form-signin-heading">Editing an author</h2>
+    <ul class="text-danger">
+      {% for f, errors in form.errors.iteritems() %}
+        {% for e in errors %}
+          <li>{{ e }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+    {{ form.csrf_token }}
+    <div class="form-group">
+      <label for="inputName">Author Name</label>
+      <input type="text" name="name" id="inputName" class="form-control" value="{{ form.name.data or '' }}"
+             placeholder="" required autofocus>
+    </div>
+    {% if obj.books %}
+      <b>Books</b>
+      <p></p>
+      <ul>
+        {% for b in obj.books %}
+          <li>{{ b.title }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <b>Author has no books</b>
+      <p></p>
+    {% endif %}
+    <button class="btn btn-primary btn-lg" name="action" value="save" type="submit">Save</button>
+    <button class="btn btn-danger btn-lg pull-right" name="action" value="delete" type="submit">Delete</button>
+  </form>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Selecting author</h4>
+        </div>
+        <div class="modal-body">
+          <p class="text-info">Author(s) with same name already exist. Select if it is the same person, otherwise create
+            a new one.</p>
+
+          <div class="authors"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default js-select">Select</button>
+          <button type="button" class="btn btn-primary js-new">Create new</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

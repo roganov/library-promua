@@ -87,6 +87,8 @@ def add_author_view():
         db.session.add(a)
         db.session.commit()
         return jsonify(id=a.id, name=a.name)
+    else:
+        return jsonify(errors=form.errors)
 
 @app.route("/api/authors")
 @login_required
@@ -115,3 +117,28 @@ def authors_view():
     author_name = request.args.get('author', '').strip()
     authors = find_authors(author_name, title).all()
     return render_template('authors.html', authors=authors)
+
+
+@app.route("/authors/<int:author_id>", methods=['POST', 'GET'])
+@can_edit_required
+def edit_author_view(author_id):
+    obj = Author.query.options(db.joinedload(Author.books)).get(author_id)
+    if obj is None:
+        abort(404)
+
+    form = AuthorForm(obj=obj)
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'save' and form.validate_on_submit():
+            form.populate_obj(obj)
+            db.session.add(obj)
+            db.session.commit()
+            flash('The book was successfully edited', 'success')
+            return redirect(url_for('authors_view'))
+        elif action == 'delete' and form.validate_on_submit():
+            db.session.delete(obj)
+            db.session.commit()
+            flash('The book was successfully deleted', 'success')
+            return redirect(url_for('authors_view'))
+
+    return render_template('edit-author.html', form=form, obj=obj)
