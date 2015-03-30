@@ -54,7 +54,7 @@ def delete_book(book_id):
     Book.query.filter_by(id=book_id).delete()
 
 def find_books(title, author_name):
-    res = Book.query.order_by('id')
+    res = Book.query.order_by(Book.title)
     if title:
         res = res.filter(Book.title == title)
     if author_name:

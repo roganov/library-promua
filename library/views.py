@@ -36,7 +36,7 @@ def logout():
 def books_view():
     title = request.args.get('title', '').strip()
     author_name = request.args.get('author', '').strip()
-    books = find_books(title, author_name)
+    books = find_books(title, author_name).all()
     return render_template('books.html', books=books)
 
 @app.route("/books/add", methods=['GET', 'POST'])
