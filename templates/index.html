@@ -1,17 +1,21 @@
 {% extends '_base.html' %}
 
 {% block content %}
-<!-- Main component for a primary marketing message or call to action -->
-<div class="jumbotron">
+  <!-- Main component for a primary marketing message or call to action -->
+  <div class="jumbotron">
     <h1>Library</h1>
+
     <p>Library is a service to organize your books so that other people can search your collection
-        by various terms.
+      by various terms.
+    </p>
+    <p>
+      You may navigate by <a href="{{ url_for('books_view') }}">books</a> or <a href="{{ url_for('authors_view') }}">authors</a>.
     </p>
     {% if not current_user.is_authenticated() %}
-    <p class="">
+      <p>
         Please <a href="{{ url_for('login') }}">sign in</a> to enjoy the full features of Library.
-    </p>
+      </p>
     {% endif %}
-</div>
+  </div>
 
 {% endblock %}
