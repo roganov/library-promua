@@ -27,7 +27,7 @@ function initAuthorsModal() {
     }
 
     var addAuthor = function () {
-        var  name = authorInput.val();
+        var  name = authorInput.val().trim();
         authorInput.val('');
         if (name === '') {
             authorInput.focus();
@@ -55,6 +55,9 @@ function initAuthorsModal() {
                 } else {
                     createInsertAuthor(authors, name);
                 }
+            },
+            error: function (resp) {
+                alert('Unexpected error: ' + resp.responseText);
             }
         });
     };
