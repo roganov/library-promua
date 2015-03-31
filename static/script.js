@@ -6,9 +6,11 @@ $(function () {
     var title = getParameterByName('title').trim(),
         author = getParameterByName('author').trim();
     if (location.pathname.match(/^\/authors/)) {
+        // select second and third rows and highlight author and title query respectively
         $(".table td:nth-child(2)").find("a,li").addBack().highlight(author, 'highlight');
         $(".table td:nth-child(3)").find("a,li").addBack().highlight(title, 'highlight');
-    } else if (location.pathname.match(/^\//)) {
+    } else if (location.pathname.match(/^\/books/)) {
+        // on the books page authors and title cols are switched
         $(".table td:nth-child(2)").find("a,li").addBack().highlight(title, 'highlight');
         $(".table td:nth-child(3)").find("a,li").addBack().highlight(author, 'highlight');
     }
@@ -16,8 +18,8 @@ $(function () {
 function initAuthorsModal() {
     'use strict';
     var authors = $('.js-authors'),
-        modal = $('#modal'),
         authorInput = $('input[name="author"]'),
+        modal = $('#modal'),
         modalAuthors = modal.find('.authors');
     if (authors.length === 0) {
         // checking that invoked on the right page
@@ -31,6 +33,8 @@ function initAuthorsModal() {
             authorInput.focus();
             return;
         }
+        // change the submit button text to 'Loading...' while adding a new author
+        $('.js-mainBtn').button('loading');
         modal.data('name', name);
         $.ajax('/api/authors', {
             method: 'GET',
@@ -55,6 +59,23 @@ function initAuthorsModal() {
         });
     };
 
+    modal.on('hidden.bs.modal', function(e) {
+        $('.js-mainBtn').button('reset');
+    });
+
+    // handle button clicks on the modal
+    modal.find('.js-select').click(function () {
+        // user selected an existing author
+        var id = modalAuthors.find('input:checked').val();
+        insertAuthor(authors, id, modal.data('name'));
+        modal.modal('hide');
+    });
+    modal.find('.js-new').click(function () {
+        // user decided to create a new author with the same nama
+        createInsertAuthor(authors, modal.data('name'));
+        modal.modal('hide');
+    });
+    // remove author from the book when a user presses the remove sign
     authors.on('click', '.author-remove', function () {
         var node = $(this).parent().parent();
         node.hide('slow', function () {
@@ -64,15 +85,8 @@ function initAuthorsModal() {
             }
         });
     });
-    modal.find('.js-select').click(function () {
-        var id = modalAuthors.find('input:checked').val();
-        insertAuthor(authors, id, modal.data('name'));
-        modal.modal('hide');
-    });
-    modal.find('.js-new').click(function () {
-        createInsertAuthor(authors, modal.data('name'));
-        modal.modal('hide');
-    });
+
+    // listeners that add a new author
     $('.js-add-author').click(addAuthor);
     authorInput.keydown(function (e) {
         if (e.keyCode === 13) { // return key
@@ -94,6 +108,7 @@ function insertAuthor(authors, authorId, name) {
     var nodes = $(authorTempl(id, authorId, name));
     authors.prev().addClass('hide');
     authors.append(nodes);
+    $('.js-mainBtn').button('reset');
 }
 function createInsertAuthor(authors, name) {
     'use strict';
@@ -139,6 +154,7 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 jQuery.fn.highlight = function (str, className) {
+    'use strict';
     var regex = new RegExp(str, "gi");
     return this.each(function () {
         $(this).contents().filter(function() {
