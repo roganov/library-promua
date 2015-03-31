@@ -5,6 +5,7 @@ from app import app, db
 
 from ..models import User
 
+
 class TestCase(unittest.TestCase):
     # Testing DB is recreated for every test
     # Better to create the DB once and wrap every test in transaction

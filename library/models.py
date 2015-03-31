@@ -5,12 +5,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login_manager
 
 
-def get_or_build(model, **fields):
-    instance = model.query.filter_by(**fields).first()
-    if not instance:
-        instance = model(**fields)
-    return instance
-
 book_author = db.Table('book_author',
     db.Column('book_id', db.Integer, db.ForeignKey('book.id')),
     db.Column('page_id', db.Integer, db.ForeignKey('author.id'))
@@ -63,8 +57,10 @@ def delete_book(book_id):
     db.session.execute(del_stm)
     Book.query.filter_by(id=book_id).delete()
 
+
 def contains(term):
     return '%{}%'.format(term)
+
 
 def find_books(title, author_name):
     res = Book.query.order_by(Book.title)
@@ -100,6 +96,7 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
 
 @login_manager.user_loader
 def load_user(uid):

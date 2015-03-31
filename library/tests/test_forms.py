@@ -39,6 +39,7 @@ class LoginFormTest(TestCase):
         })
         self.assertFalse(f.validate())
 
+
 class RegisterFormTest(TestCase):
     def test_ok(self):
         f = RegisterForm(data={

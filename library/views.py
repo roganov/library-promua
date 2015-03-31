@@ -1,8 +1,5 @@
-import json
-
-from flask import render_template, url_for, redirect, request, jsonify, flash
+from flask import render_template, url_for, redirect, request, jsonify, flash, abort
 from flask.ext.login import login_user, logout_user, login_required
-from werkzeug.exceptions import abort
 
 from app import app, db
 
@@ -16,6 +13,7 @@ from .utils import can_edit_required
 def index():
     return render_template('index.html')
 
+
 @app.route('/signin', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -24,6 +22,7 @@ def login():
         flash("Successfully logged in!", "success")
         return redirect(request.args.get('next') or url_for('index'))
     return render_template('login.html', form=form)
+
 
 @app.route("/logout")
 @login_required
@@ -44,6 +43,7 @@ def signup():
         return redirect(request.args.get('next') or url_for('index'))
     return render_template('signup.html', form=form)
 
+
 @app.route("/books")
 @login_required
 def books_view():
@@ -51,6 +51,7 @@ def books_view():
     author_name = request.args.get('author', '').strip()
     books = find_books(title, author_name).all()
     return render_template('books.html', books=books)
+
 
 @app.route("/books/add", methods=['GET', 'POST'])
 @can_edit_required
@@ -65,6 +66,7 @@ def add_book_view():
         return redirect(url_for('books_view'))
     else:
         return render_template('add-book.html', form=form)
+
 
 @app.route("/books/<int:book_id>", methods=['GET', 'POST'])
 @can_edit_required
@@ -103,6 +105,7 @@ def add_author_view():
     else:
         return jsonify(errors=form.errors)
 
+
 @app.route("/api/authors")
 @login_required
 def authors_api():
@@ -122,6 +125,7 @@ def authors_api():
     else:
         data = [{'id': a.id, 'name': a.title} for a in authors]
     return jsonify(result=data)
+
 
 @app.route("/authors")
 @login_required
