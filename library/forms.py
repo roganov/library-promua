@@ -19,7 +19,7 @@ class AuthorForm(Form):
         if self.action.data == 'delete':
             if self.obj.books:
                 self.action.errors =\
-                    ["You cannot delete an author who has associated books"]
+                    ["Only authors without associated books can be deleted"]
                 return False
             return True
 

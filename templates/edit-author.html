@@ -20,7 +20,7 @@
       <p></p>
       <ul>
         {% for b in obj.books %}
-          <li>{{ b.title }}</li>
+         <li><a href="{{ b.get_url() }}">{{ b.title }}</a></li>
         {% endfor %}
       </ul>
     {% else %}
