@@ -1,3 +1,4 @@
+BEGIN TRANSACTION;
 INSERT INTO "alembic_version" VALUES('48d6a3fff8f1');
 INSERT INTO "book" VALUES(1,'Harry Potter and the Philosopher''s Stone');
 INSERT INTO "book" VALUES(5,'American Sniper');
@@ -37,3 +38,4 @@ INSERT INTO "book_author" VALUES(11,18);
 INSERT INTO "book_author" VALUES(11,19);
 INSERT INTO "book_author" VALUES(12,1);
 INSERT INTO "book_author" VALUES(13,1);
+COMMIT;
